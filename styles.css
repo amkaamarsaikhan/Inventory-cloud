@@ -1,11 +1,9 @@
 :root {
     --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --bg: #f1f5f9;
+    --bg: #f8fafc;
     --card: #ffffff;
     --text: #1e293b;
-    --border: #cbd5e1;
-    --input-bg: #ffffff;
+    --border: #e2e8f0;
 }
 
 body.dark-mode {
@@ -13,35 +11,40 @@ body.dark-mode {
     --card: #1e293b;
     --text: #f8fafc;
     --border: #334155;
-    --input-bg: #0f172a;
 }
 
 body {
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     margin: 0;
     transition: 0.3s;
-    overflow-x: hidden;
 }
 
-/* --- FULL SCREEN SIDEBAR --- */
+/* --- Responsive Sidebar --- */
 .sidebar {
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100%;
+    left: -100%;
+    width: 85%;
+    max-width: 320px;
     height: 100%;
     background: var(--card);
     z-index: 2000;
-    transform: translateY(-100%); /* Дээрээс гарч ирнэ */
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    display: flex;
-    flex-direction: column;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    overflow-y: auto;
 }
 
-body.sidebar-open { overflow: hidden; } /* Sidebar нээлттэй үед ар талыг scroll хийхгүй */
-body.sidebar-open .sidebar { transform: translateY(0); }
+body.sidebar-open .sidebar { left: 0; }
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1999;
+}
+body.sidebar-open .sidebar-overlay { display: block; }
 
 .sidebar-header {
     padding: 20px;
@@ -51,167 +54,138 @@ body.sidebar-open .sidebar { transform: translateY(0); }
     border-bottom: 1px solid var(--border);
 }
 
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 28px;
-    color: var(--text);
-    cursor: pointer;
-}
-
-.sidebar-content {
-    padding: 30px 20px;
-    overflow-y: auto;
-    flex: 1;
-    max-width: 500px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* --- MAIN LAYOUT --- */
-.main {
-    padding: 15px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
+/* --- Header Controls (Утасны дэлгэц дээр зөв харагдах) --- */
 .header-controls {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 10px;
+    padding: 15px;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 10px 0;
+    margin-bottom: 15px;
 }
 
 .menu-btn {
     background: var(--primary);
     color: white;
     border: none;
-    padding: 12px 15px;
-    border-radius: 10px;
-    font-weight: 600;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    white-space: nowrap;
 }
 
-.search-wrapper input {
+.total-badge {
+    text-align: right;
+    background: var(--card);
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.total-badge span {
+    display: block;
+    font-weight: bold;
+    color: var(--primary);
+    font-size: 16px;
+}
+
+.search-row input {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border);
     border-radius: 10px;
     background: var(--card);
     color: var(--text);
+    box-sizing: border-box;
 }
 
-.total-badge {
-    background: var(--primary);
-    color: white;
-    padding: 5px 15px;
-    border-radius: 10px;
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-}
-
-/* --- GRID & CARDS --- */
+/* --- Inventory Grid --- */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Гар утсанд 2-оор харагдахад тохиромжтой */
-    gap: 15px;
+    grid-template-columns: repeat(2, 1fr); /* Утсан дээр 2-оор харагдах */
+    gap: 12px;
+    padding: 10px 15px;
 }
 
 @media (min-width: 768px) {
-    .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 }
 
 .card {
     background: var(--card);
-    border-radius: 15px;
+    border-radius: 12px;
     border: 1px solid var(--border);
     overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    font-size: 13px;
 }
 
-.card img { width: 100%; height: 150px; object-fit: cover; }
-.card-body { padding: 12px; }
-.card-body h4 { margin: 0 0 8px 0; font-size: 1rem; }
+.card img { width: 100%; height: 120px; object-fit: cover; }
+.card-body { padding: 10px; }
 
 .badge {
     display: inline-block;
-    background: #e2e8f0;
+    background: #f1f5f9;
     color: #475569;
-    padding: 3px 7px;
-    border-radius: 5px;
+    padding: 2px 5px;
+    border-radius: 4px;
     font-size: 10px;
-    margin: 2px;
+    margin: 1px;
 }
 
 .price {
     display: block;
-    margin-top: 10px;
-    font-weight: 800;
+    margin-top: 8px;
+    font-weight: bold;
     color: var(--primary);
-    font-size: 1.1rem;
 }
 
-/* --- BUTTONS & INPUTS --- */
+/* --- Floating Button (Dark Mode Toggle) --- */
+.fab-theme {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 3000; /* Sidebar-аас ч дээр */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+/* Бусад хэрэгцээт input-үүд */
 input, textarea {
     width: 100%;
-    padding: 14px;
-    margin-bottom: 15px;
+    padding: 12px;
+    margin-bottom: 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    background: var(--input-bg);
+    background: var(--card);
     color: var(--text);
     box-sizing: border-box;
 }
 
 .btn-primary {
-    width: 100%;
-    padding: 15px;
     background: var(--primary);
     color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.btn-print {
-    width: 100%;
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text);
     padding: 12px;
-    margin-top: 15px;
-    border-radius: 10px;
-}
-
-.fab-theme {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 25px;
-    background: var(--primary);
-    color: white;
     border: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    font-size: 20px;
-    z-index: 1500;
-}
-
-.file-drop {
-    border: 2px dashed var(--border);
-    padding: 20px;
-    text-align: center;
-    border-radius: 10px;
-    margin-bottom: 15px;
+    border-radius: 8px;
+    font-weight: bold;
 }
 
 @media print {
-    .no-print { display: none !important; }
-    .main { padding: 0; }
-    .grid { grid-template-columns: repeat(3, 1fr); }
+    .no-print, .fab-theme { display: none !important; }
 }
