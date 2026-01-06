@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Inventory Manager</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="icon" href="images/inventory.jpeg" type="image/x-icon">
+</head>
+<body>
+
+    <aside class="sidebar no-print" id="sidebar">
+        <div class="logo">📦 InvCloud</div>
+        <h4 style="margin-top: 0;">Add new item</h4>
+
+        <input type="text" id="itemName" placeholder="Item name">
+        <input type="number" id="itemPrice" placeholder="Unit price ($)">
+        <textarea id="itemColorName" placeholder="Color:Quantity (e.g., Red:10, Black:5)"></textarea>
+        <div class="file-drop" onclick="document.getElementById('itemImage').click()">
+            <span id="fileText">📸 Choose image</span>
+            <input type="file" id="itemImage" accept="image/*" style="display:none">
+        </div>
+        <div id="preview"></div>
+
+        <button id="addBtn" class="btn-add">💾 Save</button>
+        <button onclick="window.print()" class="btn-print">📄 PDF Report</button>
+    </aside>
+
+    <main class="main">
+        <div class="header-controls no-print">
+            <input type="text" id="searchInput" placeholder="🔍 Search..." oninput="searchItems()">
+            <div class="total-display">Total: <span id="total">$0</span></div>
+        </div>
+        <div id="inventoryGrid" class="grid"></div>
+    </main>
+
+    <div class="floating-controls no-print">
+        <button class="fab mode-toggle" onclick="toggleDarkMode()" title="Night/Day Mode">
+            <span id="modeIcon">🌙</span>
+        </button>
+        <button class="fab" onclick="toggleSidebar()" title="Toggle Sidebar">
+            <span id="toggleIcon">◀</span>
+        </button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+
+    <script>
+        // ТАНЫ FIREBASE CONFIG - Энд өөрийнхийгөө солиорой
+        const firebaseConfig = {
+            apiKey: "AIzaSy...", 
+            authDomain: "your-project.firebaseapp.com",
+            databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+            projectId: "your-project",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef12345"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+    </script>
+    <script src="index.js"></script>
+</body>
+</html>
