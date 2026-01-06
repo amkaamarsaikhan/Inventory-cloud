@@ -1,39 +1,41 @@
+// Firebase Setup
+const firebaseConfig = {
+    apiKey: "AIzaSyC5mHmt15bTGhLiJQFebWdYujep3q2ndp8",
+    authDomain: "inventory-8866.firebaseapp.com",
+    databaseURL: "https://inventory-8866-default-rtdb.firebaseio.com",
+    projectId: "inventory-8866",
+    storageBucket: "inventory-8866.firebasestorage.app",
+    messagingSenderId: "616659325542",
+    appId: "1:616659325542:web:c5ea93e07f8af6bad153a7"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const auth = firebase.auth();
+
 let inventory = [];
 let currentImg = "";
 let editId = null;
 
-// --- 身份验证 (Authentication) ---
+function toggleSidebar() {
+    document.body.classList.toggle('sidebar-open');
+}
+
 function login() {
     const email = document.getElementById('loginEmail').value;
     const pass = document.getElementById('loginPass').value;
-    if(!email || !pass) return alert("请输入电子邮件和密码。");
-    
-    auth.signInWithEmailAndPassword(email, pass)
-        .catch(error => alert("登录失败: " + error.message));
+    auth.signInWithEmailAndPassword(email, pass).catch(err => alert("登录失败: " + err.message));
 }
 
 function logout() {
-    if(confirm("确定要退出系统吗？")) auth.signOut();
+    auth.signOut().then(() => toggleSidebar());
 }
 
 auth.onAuthStateChanged(user => {
-    const loginSection = document.getElementById('loginSection');
-    const addSection = document.getElementById('addSection');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    if (user) {
-        loginSection.style.display = 'none';
-        addSection.style.display = 'block';
-        logoutBtn.style.display = 'block';
-    } else {
-        loginSection.style.display = 'block';
-        addSection.style.display = 'none';
-        logoutBtn.style.display = 'none';
-    }
-    render(); 
+    document.getElementById('loginSection').style.display = user ? 'none' : 'block';
+    document.getElementById('addSection').style.display = user ? 'block' : 'none';
+    render();
 });
 
-// --- 模式切换 (DarkMode) ---
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
@@ -41,12 +43,6 @@ function toggleDarkMode() {
     localStorage.setItem('darkMode', isDark);
 }
 
-function toggleSidebar() {
-    document.body.classList.toggle('sidebar-hidden');
-    document.getElementById('toggleIcon').innerText = document.body.classList.contains('sidebar-hidden') ? '▶' : '◀';
-}
-
-// --- 图片处理 ---
 document.getElementById('itemImage').onchange = function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -55,27 +51,26 @@ document.getElementById('itemImage').onchange = function (e) {
         const img = new Image();
         img.onload = function () {
             const canvas = document.createElement('canvas');
-            const maxSize = 400; 
+            const maxSize = 500;
             let w = img.width, h = img.height;
             if (w > h) { h *= maxSize / w; w = maxSize; } else { w *= maxSize / h; h = maxSize; }
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            currentImg = canvas.toDataURL('image/jpeg', 0.6); 
-            document.getElementById('preview').innerHTML = `<img src="${currentImg}" style="width:100%; border-radius:8px; margin-top:10px;">`;
-            document.getElementById('fileText').innerText = "✅ 已选择图片";
+            currentImg = canvas.toDataURL('image/jpeg', 0.7);
+            document.getElementById('preview').innerHTML = `<img src="${currentImg}" style="width:100%; border-radius:10px; margin-top:10px;">`;
+            document.getElementById('fileText').innerText = "✅ 图片已就绪";
         };
         img.src = event.target.result;
     };
     reader.readAsDataURL(file);
 };
 
-// --- 保存数据 ---
 document.getElementById('addBtn').onclick = function () {
     const name = document.getElementById('itemName').value;
     const price = Number(document.getElementById('itemPrice').value) || 0;
     const varText = document.getElementById('itemColorName').value;
 
-    if (!name || !varText) return alert("请填写商品名称和规格。");
+    if (!name || !varText) return alert("请填写完整信息。");
 
     const variants = varText.split(',').map(v => {
         const p = v.split(':');
@@ -85,26 +80,27 @@ document.getElementById('addBtn').onclick = function () {
     const itemData = { name, price, image: currentImg, variants };
 
     if (editId) {
-        db.ref('inventory/' + editId).set(itemData)
-            .then(() => alert("更新成功！"));
-        editId = null;
-        document.getElementById('addBtn').innerText = "💾 保存商品";
+        db.ref('inventory/' + editId).set(itemData).then(() => {
+            alert("更新成功");
+            editId = null;
+            document.getElementById('addBtn').innerText = "💾 保存商品";
+            toggleSidebar();
+        });
     } else {
-        db.ref('inventory').push(itemData)
-            .then(() => alert("添加成功！"));
+        db.ref('inventory').push(itemData).then(() => {
+            alert("已添加");
+            toggleSidebar();
+        });
     }
     resetForm();
 };
 
-// --- 加载和显示 ---
 window.onload = () => {
     db.ref('inventory').on('value', (snapshot) => {
         const data = snapshot.val();
         inventory = [];
         if (data) {
-            Object.keys(data).forEach(key => {
-                inventory.push({ id: key, ...data[key] });
-            });
+            Object.keys(data).forEach(key => inventory.push({ id: key, ...data[key] }));
         }
         render();
     });
@@ -126,19 +122,17 @@ function render(data = inventory) {
         card.className = "card";
         const badges = item.variants.map(v => `<span class="badge">${v.color}: ${v.qty}</span>`).join("");
 
-        const controls = isLogged ? `
-            <div class="no-print" style="margin-top:12px; display:flex; gap:8px;">
-                <button onclick="editItem('${item.id}')" style="flex:1; padding:8px; cursor:pointer; border-radius:6px; border:1px solid #ddd;">修改</button>
-                <button onclick="deleteItem('${item.id}')" style="flex:1; padding:8px; cursor:pointer; border-radius:6px; border:1px solid #ddd; color:red;">删除</button>
-            </div>` : "";
-
         card.innerHTML = `
             <img src="${item.image || 'https://via.placeholder.com/250x150'}">
             <div class="card-body">
-                <h4 style="margin:0 0 5px 0;">${item.name}</h4>
+                <h4>${item.name}</h4>
                 <div>${badges}</div>
                 <span class="price">$${itemTotal.toLocaleString()}</span>
-                ${controls}
+                ${isLogged ? `
+                <div style="margin-top:12px; display:flex; gap:5px;">
+                    <button onclick="editItem('${item.id}')" style="flex:1; padding:7px; font-size:12px; border-radius:5px; border:1px solid #ddd;">编辑</button>
+                    <button onclick="deleteItem('${item.id}')" style="flex:1; padding:7px; font-size:12px; border-radius:5px; border:1px solid #ddd; color:red;">删除</button>
+                </div>` : ""}
             </div>`;
         grid.appendChild(card);
     });
@@ -155,6 +149,7 @@ function resetForm() {
 }
 
 window.deleteItem = (id) => { if (confirm("确定要删除吗？")) db.ref('inventory/' + id).remove(); };
+
 window.editItem = (id) => {
     const it = inventory.find(i => i.id === id);
     document.getElementById('itemName').value = it.name;
@@ -163,8 +158,8 @@ window.editItem = (id) => {
     currentImg = it.image;
     editId = id;
     document.getElementById('addBtn').innerText = "🔄 更新商品";
-    document.getElementById('preview').innerHTML = `<img src="${currentImg}" style="width:100%; border-radius:8px;">`;
-    if (document.body.classList.contains('sidebar-hidden')) toggleSidebar();
+    document.getElementById('preview').innerHTML = `<img src="${currentImg}" style="width:100%; border-radius:10px;">`;
+    toggleSidebar();
 };
 
 function searchItems() {

@@ -1,83 +1,70 @@
 <!DOCTYPE html>
-<html lang="mn">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InvCloud - Бараа Материалын Бүртгэл</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>InvCloud - 库存管理</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="images/inventory.jpeg" type="image/x-icon">
 </head>
 <body>
 
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-
     <aside class="sidebar no-print" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">📦 InvCloud</div>
-            <div class="sidebar-actions">
-                <button onclick="logout()" id="logoutBtn" style="display:none;" title="Гарах">🚪</button>
-                <button class="close-sidebar mobile-only" onclick="toggleSidebar()">✕</button>
+            <button class="close-btn" onclick="toggleSidebar()">✕</button>
+        </div>
+
+        <div class="sidebar-content">
+            <div id="loginSection">
+                <h4>管理员登录</h4>
+                <input type="email" id="loginEmail" placeholder="电子邮件">
+                <input type="password" id="loginPass" placeholder="密码">
+                <button onclick="login()" class="btn-primary">登录</button>
             </div>
-        </div>
 
-        <div id="loginSection">
-            <h4>Админ нэвтрэх</h4>
-            <input type="email" id="loginEmail" placeholder="И-мэйл">
-            <input type="password" id="loginPass" placeholder="Нууц үг">
-            <button onclick="login()" class="btn-add">Нэвтрэх</button>
-        </div>
-
-        <div id="addSection" style="display:none;">
-            <h4 id="formTitle">Шинэ бараа нэмэх</h4>
-            <input type="text" id="itemName" placeholder="Барааны нэр">
-            <input type="number" id="itemPrice" placeholder="Нэгж үнэ ($)">
-            <textarea id="itemColorName" placeholder="Өнгө:Тоо (Жишээ нь: Улаан:10, Хар:5)"></textarea>
+            <div id="addSection" style="display:none;">
+                <h4 id="formTitle">添加 / 编辑商品</h4>
+                <input type="text" id="itemName" placeholder="商品名称">
+                <input type="number" id="itemPrice" placeholder="单价 ($)">
+                <textarea id="itemColorName" placeholder="颜色:数量 (例如: 红色:10, 黑色:5)"></textarea>
+                
+                <div class="file-drop" onclick="document.getElementById('itemImage').click()">
+                    <span id="fileText">📸 选择图片</span>
+                    <input type="file" id="itemImage" accept="image/*" style="display:none">
+                </div>
+                <div id="preview"></div>
+                <button id="addBtn" class="btn-primary">💾 保存商品</button>
+                <button onclick="logout()" class="btn-secondary" style="margin-top: 20px;">🚪 退出登录</button>
+            </div>
             
-            <div class="file-drop" onclick="document.getElementById('itemImage').click()">
-                <span id="fileText">📸 Зураг сонгох</span>
-                <input type="file" id="itemImage" accept="image/*" style="display:none">
-            </div>
-            <div id="preview"></div>
-            <button id="addBtn" class="btn-add">💾 Хадгалах</button>
+            <button onclick="window.print()" class="btn-print">📄 生成 PDF 报告</button>
         </div>
-        
-        <button onclick="window.print()" class="btn-print">📄 PDF Тайлан гаргах</button>
     </aside>
 
     <main class="main">
         <header class="header-controls no-print">
-            <button class="menu-toggle mobile-only" onclick="toggleSidebar()">☰</button>
-            <input type="text" id="searchInput" placeholder="🔍 Хайх..." oninput="searchItems()">
-            <div class="total-display">Нийт: <span id="total">$0</span></div>
+            <button class="menu-btn" onclick="toggleSidebar()">☰ 菜单</button>
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="🔍 搜索商品..." oninput="searchItems()">
+            </div>
+            <div class="total-badge">
+                <small>总资产</small>
+                <span id="total">$0</span>
+            </div>
         </header>
 
         <div id="inventoryGrid" class="grid"></div>
     </main>
 
-    <div class="floating-controls no-print">
-        <button class="fab mode-toggle" onclick="toggleDarkMode()" title="Theme">
-            <span id="modeIcon">🌙</span>
-        </button>
-    </div>
+    <button class="fab-theme no-print" onclick="toggleDarkMode()">
+        <span id="modeIcon">🌙</span>
+    </button>
 
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyC5mHmt15bTGhLiJQFebWdYujep3q2ndp8",
-            authDomain: "inventory-8866.firebaseapp.com",
-            databaseURL: "https://inventory-8866-default-rtdb.firebaseio.com",
-            projectId: "inventory-8866",
-            storageBucket: "inventory-8866.firebasestorage.app",
-            messagingSenderId: "616659325542",
-            appId: "1:616659325542:web:c5ea93e07f8af6bad153a7"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const auth = firebase.auth();
-    </script>
     <script src="script.js"></script>
 </body>
 </html>
