@@ -1,58 +1,62 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="mn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VDD-InvCloud</title>
+    <title>InvCloud - Бараа Материалын Бүртгэл</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="images/inventory.jpeg" type="image/x-icon">
 </head>
 <body>
 
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <aside class="sidebar no-print" id="sidebar">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="sidebar-header">
             <div class="logo">📦 InvCloud</div>
-            <button onclick="logout()" id="logoutBtn" style="display:none; border:none; background:none; font-size: 20px; cursor:pointer;" title="退出登录">🚪</button>
+            <div class="sidebar-actions">
+                <button onclick="logout()" id="logoutBtn" style="display:none;" title="Гарах">🚪</button>
+                <button class="close-sidebar mobile-only" onclick="toggleSidebar()">✕</button>
+            </div>
         </div>
 
         <div id="loginSection">
-            <h4 style="margin-bottom: 10px;">管理员登录</h4>
-            <input type="email" id="loginEmail" placeholder="电子邮件">
-            <input type="password" id="loginPass" placeholder="密码">
-            <button onclick="login()" class="btn-add">登录</button>
-            <p style="font-size: 12px; color: #666; margin-top: 10px;">只有管理员可以添加或编辑商品。</p>
+            <h4>Админ нэвтрэх</h4>
+            <input type="email" id="loginEmail" placeholder="И-мэйл">
+            <input type="password" id="loginPass" placeholder="Нууц үг">
+            <button onclick="login()" class="btn-add">Нэвтрэх</button>
         </div>
 
         <div id="addSection" style="display:none;">
-            <h4 style="margin-top: 0;">添加新商品</h4>
-            <input type="text" id="itemName" placeholder="商品名称">
-            <input type="number" id="itemPrice" placeholder="单价 ($)">
-            <textarea id="itemColorName" placeholder="颜色:数量 (例如: 红色:10, 黑色:5)"></textarea>
+            <h4 id="formTitle">Шинэ бараа нэмэх</h4>
+            <input type="text" id="itemName" placeholder="Барааны нэр">
+            <input type="number" id="itemPrice" placeholder="Нэгж үнэ ($)">
+            <textarea id="itemColorName" placeholder="Өнгө:Тоо (Жишээ нь: Улаан:10, Хар:5)"></textarea>
+            
             <div class="file-drop" onclick="document.getElementById('itemImage').click()">
-                <span id="fileText">📸 选择图片</span>
+                <span id="fileText">📸 Зураг сонгох</span>
                 <input type="file" id="itemImage" accept="image/*" style="display:none">
             </div>
             <div id="preview"></div>
-            <button id="addBtn" class="btn-add">💾 保存商品</button>
+            <button id="addBtn" class="btn-add">💾 Хадгалах</button>
         </div>
         
-        <button onclick="window.print()" class="btn-print" style="margin-top: 20px;">📄 生成 PDF 报告</button>
+        <button onclick="window.print()" class="btn-print">📄 PDF Тайлан гаргах</button>
     </aside>
 
     <main class="main">
-        <div class="header-controls no-print">
-            <input type="text" id="searchInput" placeholder="🔍 搜索商品..." oninput="searchItems()">
-            <div class="total-display">总计资产: <span id="total">$0</span></div>
-        </div>
+        <header class="header-controls no-print">
+            <button class="menu-toggle mobile-only" onclick="toggleSidebar()">☰</button>
+            <input type="text" id="searchInput" placeholder="🔍 Хайх..." oninput="searchItems()">
+            <div class="total-display">Нийт: <span id="total">$0</span></div>
+        </header>
+
         <div id="inventoryGrid" class="grid"></div>
     </main>
 
     <div class="floating-controls no-print">
-        <button class="fab mode-toggle" onclick="toggleDarkMode()" title="昼夜模式">
+        <button class="fab mode-toggle" onclick="toggleDarkMode()" title="Theme">
             <span id="modeIcon">🌙</span>
-        </button>
-        <button class="fab" onclick="toggleSidebar()" title="切换侧边栏">
-            <span id="toggleIcon">◀</span>
         </button>
     </div>
 
@@ -68,8 +72,7 @@
             projectId: "inventory-8866",
             storageBucket: "inventory-8866.firebasestorage.app",
             messagingSenderId: "616659325542",
-            appId: "1:616659325542:web:c5ea93e07f8af6bad153a7",
-            measurementId: "G-MGRGX96C99"
+            appId: "1:616659325542:web:c5ea93e07f8af6bad153a7"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
