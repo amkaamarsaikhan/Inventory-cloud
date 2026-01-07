@@ -1,6 +1,5 @@
 {
-  "rules": {
-    ".read": true,
-    ".write": "auth != null"
+  "dependencies": {
+    "firebase": "^12.7.0"
   }
 }

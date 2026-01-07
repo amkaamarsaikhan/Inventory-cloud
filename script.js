@@ -75,11 +75,13 @@ function checkAuthState() {
         if (user) {
             loginSection.style.display = 'none';
             addSection.style.display = 'block';
+            loadData(); // Зөвхөн нэвтэрсэн үед өгөгдлийг татаж эхэлнэ
         } else {
             loginSection.style.display = 'block';
             addSection.style.display = 'none';
+            inventory = []; // Нэвтрээгүй бол жагсаалтыг цэвэрлэх
+            render([]); 
         }
-        render();
     });
 }
 
@@ -185,14 +187,19 @@ document.getElementById('addBtn').onclick = async function() {
 function prepareEdit(id) {
     const item = inventory.find(i => i.id === id);
     if (!item) return;
+    
+    // Мэдээллийг бөглөх
     document.getElementById('itemName').value = item.name;
     document.getElementById('itemPrice').value = item.price;
     document.getElementById('itemColorName').value = item.variants.map(v => `${v.color}:${v.qty}`).join(",");
     
-    // Зургийг засахад бэлдэх
-    currentImageData = item.image || "";
+    // Зургийг заавал энд дахин оноож өгөх хэрэгтэй!
+    currentImageData = item.image || ""; 
+    
     if (currentImageData) {
         document.getElementById('preview').innerHTML = `<img src="${currentImageData}" style="width:100%; border-radius:8px; margin-top:10px; max-height:150px; object-fit:cover;">`;
+    } else {
+        document.getElementById('preview').innerHTML = "";
     }
 
     editId = id;
