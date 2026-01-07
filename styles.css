@@ -21,40 +21,39 @@ body {
     transition: 0.3s;
 }
 
-/* --- Responsive Sidebar --- */
+/* Sidebar & Layout */
 .sidebar {
     position: fixed;
     top: 0;
     left: -100%;
     width: 85%;
-    max-width: 320px;
+    max-width: 300px;
     height: 100%;
     background: var(--card);
     z-index: 2000;
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    transition: 0.3s;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
     overflow-y: auto;
 }
 
-body.sidebar-open .sidebar { left: 0; }
+body.sidebar-open .sidebar {
+    left: 0;
+}
+
 .sidebar-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 1999;
 }
-body.sidebar-open .sidebar-overlay { display: block; }
 
-.sidebar-header {
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
+body.sidebar-open .sidebar-overlay {
+    display: block;
 }
 
-/* --- Header Controls (Утасны дэлгэц дээр зөв харагдах) --- */
+/* Header & Inputs */
 .header-controls {
     padding: 15px;
     background: var(--bg);
@@ -68,16 +67,6 @@ body.sidebar-open .sidebar-overlay { display: block; }
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-}
-
-.menu-btn {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-size: 14px;
-    white-space: nowrap;
 }
 
 .total-badge {
@@ -95,81 +84,11 @@ body.sidebar-open .sidebar-overlay { display: block; }
     font-size: 16px;
 }
 
-.search-row input {
+input,
+textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--card);
-    color: var(--text);
-    box-sizing: border-box;
-}
-
-/* --- Inventory Grid --- */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Утсан дээр 2-оор харагдах */
-    gap: 12px;
-    padding: 10px 15px;
-}
-
-@media (min-width: 768px) {
-    .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-}
-
-.card {
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    font-size: 13px;
-}
-
-.card img { width: 100%; height: 120px; object-fit: cover; }
-.card-body { padding: 10px; }
-
-.badge {
-    display: inline-block;
-    background: #f1f5f9;
-    color: #475569;
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-size: 10px;
-    margin: 1px;
-}
-
-.price {
-    display: block;
-    margin-top: 8px;
-    font-weight: bold;
-    color: var(--primary);
-}
-
-/* --- Floating Button (Dark Mode Toggle) --- */
-.fab-theme {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    cursor: pointer;
-    z-index: 3000; /* Sidebar-аас ч дээр */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-}
-
-/* Бусад хэрэгцээт input-үүд */
-input, textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     border: 1px solid var(--border);
     border-radius: 8px;
     background: var(--card);
@@ -178,14 +97,111 @@ input, textarea {
 }
 
 .btn-primary {
+    width: 100%;
     background: var(--primary);
     color: white;
-    padding: 12px;
     border: none;
+    padding: 12px;
     border-radius: 8px;
     font-weight: bold;
+    cursor: pointer;
+}
+
+/* Inventory Grid & Cards */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 15px;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+.card {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.card img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 10px;
+    flex: 1;
+}
+
+.card-body h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+}
+
+/* Variant & Sell Button */
+.variant-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 4px 6px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+}
+
+body.dark-mode .variant-row {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sell-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.sell-btn:active {
+    transform: scale(0.9);
+}
+
+.price {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: var(--primary);
+    font-size: 14px;
+}
+
+/* Floating Button */
+.fab-theme {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    z-index: 3000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    font-size: 20px;
 }
 
 @media print {
-    .no-print, .fab-theme { display: none !important; }
+    .no-print {
+        display: none !important;
+    }
 }
