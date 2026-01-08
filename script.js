@@ -12,10 +12,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
+const storage = firebase.storage(); // Storage-г энд нэмлээ
 
 let inventory = [];
 let editId = null;
-let currentImageData = "";
+let currentImageData = ""; // Хуучин URL эсвэл Base64 хадгалах
+let selectedFile = null;   // Шинээр сонгосон файл хадгалах
 
 // Auth State
 auth.onAuthStateChanged(user => {
@@ -69,7 +71,7 @@ async function sellItem(itemId, variantIndex) {
 function showHistory() {
     db.ref("history").once("value", snapshot => {
         const data = snapshot.val();
-        if (!data) return alert("暂无销售记录 (Борлуулалтын түүх байхгүй байна)");
+        if (!data) return alert("暂无销售记录");
 
         const historyArray = Object.values(data).reverse();
         let totalSales = 0;
@@ -80,11 +82,7 @@ function showHistory() {
         }).join("");
 
         const win = window.open("", "HistoryWindow", "width=800,height=800");
-
-        if (!win) {
-            alert("⚠️ 弹出窗口被拦截！请允许弹出窗口。");
-            return;
-        }
+        if (!win) return alert("⚠️ 弹出窗口被拦截！");
 
         win.document.write(`
             <html><head><title>销售历史</title><style>
@@ -97,11 +95,7 @@ function showHistory() {
             </style></head><body>
             <div class="header"><h2>📜 销售历史</h2><div class="total">总计: ¥${totalSales.toLocaleString()}</div></div>
             <table><tr><th>时间</th><th>商品</th><th align="right">金额</th></tr>${rows}</table>
-            <br>
-            <button class="no-print" onclick="setTimeout(() => { window.print(); }, 500)" 
-                style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
-                🖨️ 打印 / 导出 PDF
-            </button>
+            <br><button class="no-print" onclick="window.print()" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">🖨️ 打印 / PDF</button>
             </body></html>
         `);
         win.document.close();
@@ -139,7 +133,7 @@ function render(data = inventory) {
                     <div class="variant-row">
                         <span>${v.color}: <b>${v.qty}</b></span>
                         <div class="action-btns">
-                            <button class="add-qty-btn" onclick="addItemQty('${item.id}', ${idx})">+</button>
+                            <button class="add-qty-btn" onclick="addItemQty('${item.id}', ${idx})" style="background:#2563eb; color:white; border:none; border-radius:4px; cursor:pointer; width:28px; height:28px;">+</button>
                             <button class="sell-btn" onclick="sellItem('${item.id}', ${idx})">💸 出售</button>
                         </div>
                     </div>
@@ -166,14 +160,13 @@ function addVariantInput(color = "", qty = 0) {
     const div = document.createElement('div');
     div.className = 'variant-input-group';
     div.innerHTML = `
-        <input type="text" placeholder="颜色 (Өнгө)" class="v-color" value="${color}">
+        <input type="text" placeholder="颜色" class="v-color" value="${color}">
         <div class="counter-box">
             <button type="button" onclick="changeQty(this, -1)">-</button>
             <input type="number" value="${qty}" class="v-qty">
             <button type="button" onclick="changeQty(this, 1)">+</button>
         </div>
-        <button type="button" class="remove-btn" onclick="this.parentElement.remove()" 
-                style="color: #ef4444; border: none; background: none; font-size: 18px; cursor: pointer; padding: 0 5px;">✕</button>
+        <button type="button" class="remove-btn" onclick="this.parentElement.remove()" style="color: #ef4444; border: none; background: none; font-size: 18px; cursor: pointer;">✕</button>
     `;
     document.getElementById('variantInputs').appendChild(div);
 }
@@ -184,15 +177,19 @@ function changeQty(btn, delta) {
     input.value = val < 0 ? 0 : val;
 }
 
+// Зураг сонгох хэсэг - ШИНЭЧЛЭГДСЭН
 document.getElementById('itemImage').onchange = (e) => {
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-        currentImageData = ev.target.result;
-        document.getElementById('preview').innerHTML = `<img src="${currentImageData}" style="width:100%; border-radius:12px; margin-top:10px;">`;
-    };
-    reader.readAsDataURL(e.target.files[0]);
+    selectedFile = e.target.files[0]; // Файлыг санах ойд авна
+    if (selectedFile) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            document.getElementById('preview').innerHTML = `<img src="${ev.target.result}" style="width:100%; border-radius:12px; margin-top:10px;">`;
+        };
+        reader.readAsDataURL(selectedFile);
+    }
 };
 
+// Хадгалах функц - ШИНЭЧЛЭГДСЭН
 async function saveItem() {
     const name = document.getElementById('itemName').value;
     const price = parseFloat(document.getElementById('itemPrice').value);
@@ -203,9 +200,29 @@ async function saveItem() {
 
     if (!name || isNaN(price)) return alert("请填写完整信息");
 
-    const data = { name, price, variants, image: currentImageData };
-    editId ? await db.ref(`items/${editId}`).update(data) : await db.ref("items").push(data);
-    resetForm(); toggleSidebar();
+    let imageUrl = currentImageData;
+
+    try {
+        // Хэрэв шинэ зураг сонгосон бол Firebase Storage-руу хуулна
+        if (selectedFile) {
+            const storageRef = storage.ref(`items/${Date.now()}_${selectedFile.name}`);
+            const snapshot = await storageRef.put(selectedFile);
+            imageUrl = await snapshot.ref.getDownloadURL();
+        }
+
+        const data = { name, price, variants, image: imageUrl };
+
+        if (editId) {
+            await db.ref(`items/${editId}`).update(data);
+        } else {
+            await db.ref("items").push(data);
+        }
+
+        resetForm();
+        toggleSidebar();
+    } catch (err) {
+        alert("Хадгалахад алдаа гарлаа: " + err.message);
+    }
 }
 
 function resetForm() {
@@ -213,7 +230,9 @@ function resetForm() {
     document.getElementById('itemPrice').value = "";
     document.getElementById('variantInputs').innerHTML = "";
     document.getElementById('preview').innerHTML = "";
-    currentImageData = ""; editId = null;
+    currentImageData = ""; 
+    editId = null;
+    selectedFile = null; // Файлыг цэвэрлэх
     addVariantInput();
 }
 
@@ -232,7 +251,6 @@ function prepareEdit(id) {
 function deleteItem(id) { if (confirm("确定删除吗？")) db.ref(`items/${id}`).remove(); }
 function login() { auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPass').value).catch(e => alert(e.message)); }
 function logout() { auth.signOut().then(() => window.location.reload()); }
-
 function printInventory() { window.print(); }
 
 addVariantInput();
