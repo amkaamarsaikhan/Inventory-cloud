@@ -62,28 +62,41 @@ async function sellItem(itemId, variantIndex) {
 function showHistory() {
     db.ref("history").once("value", snapshot => {
         const data = snapshot.val();
-        if (!data) return alert("暂无销售记录");
+        if (!data) return alert("暂无销售记录 (Борлуулалтын түүх байхгүй байна)");
 
         const historyArray = Object.values(data).reverse();
         let totalSales = 0;
         let rows = historyArray.map(h => {
-            totalSales += parseFloat(h.price);
-            return `<tr><td>${h.time}</td><td>${h.itemName} (${h.color})</td><td align="right">¥${h.price}</td></tr>`;
+            const price = parseFloat(h.price) || 0;
+            totalSales += price;
+            return `<tr><td>${h.time}</td><td>${h.itemName || '未知'} (${h.color || '-'})</td><td align="right">¥${price.toLocaleString()}</td></tr>`;
         }).join("");
 
-        const win = window.open("", "History", "width=600,height=800");
+        // 1. Цонх нээх оролдлого
+        const win = window.open("", "HistoryWindow", "width=800,height=800");
+
+        // 2. Цонх нээгдсэн эсэхийг шалгах (АЛДААНААС СЭРГИЙЛЭХ ХЭСЭГ)
+        if (!win || win.closed || typeof win.document === 'undefined') {
+            alert("⚠️ 弹出窗口被拦截！请允许此页面的弹出窗口以查看历史记录。\n\n(Таны хөтөч цонх нээхийг хаасан байна. Хаягны мөрний баруун талд байгаа 'Popup blocked' хэсэг дээр дарж зөвшөөрнө үү.)");
+            return;
+        }
+
+        // 3. Зөвхөн цонх нээгдсэн тохиолдолд өгөгдлийг бичих
         win.document.write(`
             <html><head><title>销售历史</title><style>
-                body { font-family: sans-serif; padding: 20px; }
-                .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2563eb; padding-bottom: 10px; }
-                .total { background: #2563eb; color: white; padding: 10px; border-radius: 8px; font-weight: bold; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                body { font-family: sans-serif; padding: 20px; line-height: 1.5; }
+                .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2563eb; padding-bottom: 10px; margin-bottom: 20px; }
+                .total { background: #2563eb; color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
+                table { width: 100%; border-collapse: collapse; }
                 th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+                tr:hover { background: #f8fafc; }
             </style></head><body>
             <div class="header"><h2>📜 销售历史</h2><div class="total">总计: ¥${totalSales.toLocaleString()}</div></div>
             <table><tr><th>时间</th><th>商品</th><th align="right">金额</th></tr>${rows}</table>
+            <button onclick="setTimeout(() => { window.print(); }, 500)">打印 / PDF</button>
             </body></html>
         `);
+        win.document.close();
     });
 }
 
@@ -143,13 +156,14 @@ function addVariantInput(color = "", qty = 0) {
     const div = document.createElement('div');
     div.className = 'variant-input-group';
     div.innerHTML = `
-        <input type="text" placeholder="颜色" class="v-color" value="${color}" style="flex:2;">
+        <input type="text" placeholder="颜色 (Өнгө)" class="v-color" value="${color}">
         <div class="counter-box">
             <button type="button" onclick="changeQty(this, -1)">-</button>
             <input type="number" value="${qty}" class="v-qty">
             <button type="button" onclick="changeQty(this, 1)">+</button>
         </div>
-        <button type="button" onclick="this.parentElement.remove()" style="color:red; border:none; background:none; cursor:pointer;">✕</button>
+        <button type="button" class="remove-btn" onclick="this.parentElement.remove()" 
+                style="color: #ef4444; border: none; background: none; font-size: 18px; cursor: pointer; padding: 0 5px;">✕</button>
     `;
     document.getElementById('variantInputs').appendChild(div);
 }
@@ -210,3 +224,10 @@ function login() { auth.signInWithEmailAndPassword(document.getElementById('logi
 function logout() { auth.signOut().then(() => window.location.reload()); }
 
 addVariantInput();
+
+
+// script.js доторх хуучин printInventory функцийг үүгээр соль
+function printInventory() {
+    // Ямар нэгэн setTimeout эсвэл нэмэлт кодгүйгээр шууд дуудах
+    window.print();
+}

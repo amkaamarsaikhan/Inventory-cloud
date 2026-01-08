@@ -23,7 +23,7 @@
             <div class="header-center">
                 <div class="search-wrapper">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchInput" placeholder="搜索商品名称或颜色..." oninput="searchItems()">
+                    <input type="text" id="searchInput" placeholder="搜索商品名称或颜色..." oninput="searchItems()" >
                 </div>
             </div>
 
@@ -69,8 +69,8 @@
                     <button class="btn-primary" id="saveBtn" onclick="saveItem()">💾 保存商品</button>
                 </div>
                 
-                <div class="sidebar-footer">
-                    <button onclick="window.print()" class="btn-outline success">🖨️ 导出 PDF / 打印</button>
+                <div class="sidebar-footer" style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                    <button onclick="printInventory()" class="btn-outline" style="border-color: #10b981; color: #10b981;">🖨️ 导出 PDF / 打印</button>
                     <button onclick="showHistory()" class="btn-outline">📜 销售历史</button>
                     <button onclick="logout()" class="btn-outline danger">🚪 退出登录</button>
                 </div>
