@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InvCloud - Inventory System</title>
+    <title>VDD-仓库</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="images/inventory.jpeg" type="image/x-icon">
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
 </head>
-
 <body>
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
@@ -20,25 +19,25 @@
             <div class="header-left">
                 <button class="menu-btn" onclick="toggleSidebar()">☰ 菜单</button>
             </div>
-
+            
             <div class="header-center">
                 <div class="search-wrapper">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchInput" placeholder="搜索商品..." oninput="searchItems()">
+                    <input type="text" id="searchInput" placeholder="搜索商品名称或颜色..." oninput="searchItems()">
                 </div>
             </div>
 
             <div class="header-right">
                 <div class="total-badge">
                     <small>总资产</small>
-                    <span id="total">¥0</span>
+                    <span class="total-amount" id="total">¥0</span>
                 </div>
                 <button class="theme-toggle" onclick="toggleDarkMode()" id="modeIcon">🌙</button>
             </div>
         </div>
     </header>
 
-    <aside class="sidebar">
+    <aside class="sidebar no-print">
         <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
         <div class="sidebar-inner">
             <div id="loginSection" style="display: none;">
@@ -51,14 +50,14 @@
             </div>
 
             <div id="adminSection" style="display: none;">
-                <h2>📦 添加 / 编辑商品</h2>
+                <h2 id="formTitle">📦 添加 / 编辑商品</h2>
                 <div class="form-group">
                     <input type="text" id="itemName" placeholder="商品名称">
                     <input type="number" id="itemPrice" placeholder="单价 (¥)">
-
+                    
                     <div id="variantInputs"></div>
                     <button class="btn-secondary" onclick="addVariantInput()">➕ 添加更多颜色</button>
-
+                    
                     <div class="image-upload-area">
                         <label for="itemImage" class="upload-label">
                             <span id="fileText">📸 选择图片</span>
@@ -66,10 +65,10 @@
                         </label>
                         <div id="preview"></div>
                     </div>
-
+                    
                     <button class="btn-primary" id="saveBtn" onclick="saveItem()">💾 保存商品</button>
                 </div>
-                <hr>
+                
                 <div class="sidebar-footer">
                     <button onclick="window.print()" class="btn-outline success">🖨️ 导出 PDF / 打印</button>
                     <button onclick="showHistory()" class="btn-outline">📜 销售历史</button>
@@ -80,9 +79,8 @@
     </aside>
 
     <main class="grid" id="inventoryGrid">
-    </main>
+        </main>
 
     <script src="script.js"></script>
 </body>
-
 </html>

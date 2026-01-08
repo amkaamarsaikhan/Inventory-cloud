@@ -48,7 +48,6 @@ body {
     gap: 15px;
 }
 
-/* Search Bar Fix */
 .search-wrapper {
     position: relative;
     flex: 1;
@@ -72,7 +71,6 @@ body {
     border-radius: 12px;
     color: var(--text);
     outline: none;
-    margin-bottom: 0 !important;
 }
 
 .header-right {
@@ -80,27 +78,20 @@ body {
     align-items: center;
     gap: 15px;
 }
-.menu-btn {
-    background: var(--primary);
-    color: white;
-    padding: 6px 16px;
-    border-radius: 12px;
-    text-align: right;
 
-}
-
+.menu-btn,
 .total-badge {
     background: var(--primary);
     color: white;
-    padding: 6px 16px;
+    padding: 8px 16px;
     border-radius: 12px;
-    text-align: right;
+    border: none;
+    cursor: pointer;
 }
 
 .total-amount {
     font-weight: 800;
     font-size: 1.1rem;
-    display: block;
 }
 
 .theme-toggle {
@@ -128,12 +119,7 @@ body {
 body.sidebar-open .sidebar {
     left: 0;
 }
-.sidebar-footer {
-    padding-top: 5px;
-}
-.sidebar hr {
-    display: none; /* Зураасыг бүрмөсөн устгана */
-}
+
 .close-sidebar {
     position: absolute;
     top: 20px;
@@ -145,50 +131,46 @@ body.sidebar-open .sidebar {
     color: var(--text);
 }
 
-/* Sidebar Elements Fix */
-.form-group input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text);
-}
-
-.variant-input-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
+/* Counter Fix (Энд гол засал байна) */
 .counter-box {
     display: flex;
     border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
+    background: var(--bg);
 }
 
 .counter-box button {
     width: 35px;
-    height: 35px;
+    height: 38px;
     border: none;
-    background: var(--bg);
+    background: transparent;
     color: var(--text);
     cursor: pointer;
     font-size: 18px;
 }
 
 .counter-box input {
-    width: 45px !important;
-    margin-bottom: 0 !important;
+    width: 50px !important;
+    height: 38px !important;
+    margin: 0 !important;
     border: none !important;
+    /* Давхар хүрээг арилгав */
     text-align: center;
     font-weight: bold;
+    background: transparent !important;
+    color: var(--text);
+    -moz-appearance: textfield;
 }
 
-/* Card UI */
+/* Chrome/Safari-н сумыг арилгаж гарнаас бичихэд цэвэрхэн болгоно */
+.counter-box input::-webkit-outer-spin-button,
+.counter-box input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Card & Grid */
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -250,24 +232,6 @@ body.sidebar-open .sidebar {
     margin: 15px 0;
 }
 
-.admin-controls {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    border-top: 1px solid var(--border);
-    padding-top: 15px;
-}
-
-.admin-controls button {
-    background: none;
-    border: 1px solid var(--border);
-    padding: 6px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    color: var(--text);
-    font-size: 13px;
-}
-
 /* Buttons */
 .btn-primary {
     width: 100%;
@@ -278,6 +242,7 @@ body.sidebar-open .sidebar {
     border-radius: 12px;
     font-weight: bold;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 .btn-secondary {
@@ -287,7 +252,7 @@ body.sidebar-open .sidebar {
     color: var(--primary);
     padding: 10px;
     border-radius: 12px;
-    margin-bottom: 20px;
+    margin: 15px 0;
     cursor: pointer;
 }
 
@@ -300,11 +265,6 @@ body.sidebar-open .sidebar {
     cursor: pointer;
     color: var(--text);
     margin-bottom: 10px;
-}
-
-.danger {
-    border-color: var(--danger) !important;
-    color: var(--danger) !important;
 }
 
 .sidebar-overlay {
@@ -320,40 +280,31 @@ body.sidebar-open .sidebar-overlay {
     display: block;
 }
 
-.login-msg {
-    grid-column: 1/-1;
-    text-align: center;
-    padding: 100px;
-    opacity: 0.6;
-}
-/* PDF хэвлэх үеийн тусгай тохиргоо */
+/* Print Settings */
 @media print {
-    /* Товчлуур, хайлтын хэсэг, sidebar-г нуух */
-    .no-print, .header-controls, .sidebar, .sidebar-overlay, .admin-controls, .sell-btn, .btn-secondary, hr {
+
+    .no-print,
+    .header-controls,
+    .sidebar,
+    .sidebar-overlay,
+    .admin-controls,
+    .sell-btn,
+    .btn-secondary {
         display: none !important;
     }
 
     body {
         background: white !important;
-        padding: 0;
     }
 
     .grid {
-        display: block !important; /* PDF дээр нэг мөрөнд биш, жагсаалт болгож харуулбал илүү тохиромжтой */
+        display: block !important;
         padding: 0;
     }
 
     .card {
-        break-inside: avoid; /* Карт дундуураа тасрахаас сэргийлнэ */
         border: 1px solid #eee;
         margin-bottom: 20px;
         box-shadow: none !important;
-        transform: none !important;
-    }
-
-    .total-badge {
-        color: black !important;
-        border: 1px solid #000;
-        background: none !important;
     }
 }
