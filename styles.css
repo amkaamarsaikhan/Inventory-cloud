@@ -4,6 +4,8 @@
     --card: #ffffff;
     --text: #1e293b;
     --border: #e2e8f0;
+    --danger: #ef4444;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
 
 body.dark-mode {
@@ -13,44 +15,257 @@ body.dark-mode {
     --border: #334155;
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    font-family: -apple-system, system-ui, sans-serif;
+    font-family: -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    margin: 0;
     transition: 0.3s;
 }
 
-/* Sidebar & Layout */
+/* Header */
+.header-controls {
+    background: var(--card);
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 15px;
+}
+
+/* Search Bar Fix */
+.search-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    z-index: 5;
+    color: #94a3b8;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 12px 15px 12px 45px !important;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    outline: none;
+    margin-bottom: 0 !important;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.menu-btn {
+    background: var(--primary);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 12px;
+    text-align: right;
+
+}
+
+.total-badge {
+    background: var(--primary);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 12px;
+    text-align: right;
+}
+
+.total-amount {
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: block;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* Sidebar */
 .sidebar {
     position: fixed;
     top: 0;
-    left: -100%;
-    width: 85%;
-    max-width: 300px;
+    left: -350px;
+    width: 350px;
     height: 100%;
     background: var(--card);
     z-index: 2000;
     transition: 0.3s;
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    padding: 25px;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
 }
 
 body.sidebar-open .sidebar {
     left: 0;
 }
-
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1999;
+.sidebar-footer {
+    padding-top: 5px;
+}
+.sidebar hr {
+    display: none; /* Зураасыг бүрмөсөн устгана */
+}
+.close-sidebar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border: none;
+    background: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text);
 }
 
-body.sidebar-open .sidebar-overlay {
+/* Sidebar Elements Fix */
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+}
+
+.variant-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.counter-box {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.counter-box button {
+    width: 35px;
+    height: 35px;
+    border: none;
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.counter-box input {
+    width: 45px !important;
+    margin-bottom: 0 !important;
+    border: none !important;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Card UI */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 25px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.card {
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: 0.3s;
+    box-shadow: var(--shadow);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 18px;
+}
+
+.variant-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg);
+    padding: 8px 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.sell-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.price-tag {
     display: block;
+    text-align: right;
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 1.3rem;
+    margin: 15px 0;
+}
+
+.admin-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
+}
+
+.admin-controls button {
+    background: none;
+    border: 1px solid var(--border);
+    padding: 6px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 13px;
 }
 
 /* Buttons */
@@ -59,293 +274,86 @@ body.sidebar-open .sidebar-overlay {
     background: var(--primary);
     color: white;
     border: none;
-    padding: 12px;
-    border-radius: 8px;
+    padding: 14px;
+    border-radius: 12px;
     font-weight: bold;
     cursor: pointer;
 }
 
 .btn-secondary {
-    background: #64748b;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.btn-danger {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.btn-print {
-    background: #6366f1;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
     width: 100%;
-    cursor: pointer;
-}
-
-.btn-add-variant {
+    border: 2px dashed var(--primary);
     background: none;
-    border: 1px dashed var(--primary);
     color: var(--primary);
-    width: 100%;
-    padding: 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-bottom: 15px;
-    font-size: 13px;
-}
-
-/* Grid & Cards */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 15px;
-}
-
-@media (min-width: 768px) {
-    .grid {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    }
-}
-
-.card {
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.card img {
-    width: 100%;
-    height: 130px;
-    object-fit: cover;
-}
-
-.card-body {
     padding: 10px;
-}
-
-.card-body h4 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-}
-
-/* Variant Row & Sell Button */
-.variant-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.03);
-    padding: 5px 8px;
-    border-radius: 6px;
-    margin-bottom: 4px;
-}
-
-body.dark-mode .variant-row {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.sell-btn {
-    background: #10b981;
-    color: white;
-    border: none;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: bold;
+    border-radius: 12px;
+    margin-bottom: 20px;
     cursor: pointer;
 }
 
-/* Compact Counter (Нэг мөрөнд) */
-.counter {
-    display: flex;
-    align-items: center;
+.btn-outline {
+    width: 100%;
+    padding: 12px;
+    background: none;
     border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    height: 36px;
-}
-
-.counter button {
-    width: 30px;
-    height: 100%;
-    border: none;
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--text);
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 18px;
-}
-
-.counter input {
-    width: 40px;
-    border: none !important;
-    text-align: center;
-    margin-bottom: 0 !important;
-    background: transparent;
     color: var(--text);
-    -moz-appearance: textfield;
+    margin-bottom: 10px;
 }
 
-.counter input::-webkit-outer-spin-button,
-.counter input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+.danger {
+    border-color: var(--danger) !important;
+    color: var(--danger) !important;
 }
 
-/* Modal */
-.modal {
+.sidebar-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 3000;
-    padding: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1500;
+    backdrop-filter: blur(2px);
 }
 
-.modal-content {
-    background: var(--card);
-    border-radius: 12px;
-    padding: 20px;
-    max-height: 80vh;
-    overflow-y: auto;
-    max-width: 500px;
-    margin: auto;
-}
-
-/* FAB & Others */
-.fab-theme {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.price {
+body.sidebar-open .sidebar-overlay {
     display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    color: var(--primary);
-    font-size: 15px;
-}
-/* History Modal доторх толгой хэсэг */
-.history-header-summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid var(--border);
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    position: sticky;
-    top: 0;
-    background: var(--card);
-    z-index: 10;
 }
 
-.history-header-summary h3 {
-    margin: 0;
-    font-size: 18px;
+.login-msg {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 100px;
+    opacity: 0.6;
 }
-
-/* Нийт борлуулалтын тэмдэг */
-.sales-total-badge {
-    text-align: right;
-    background: #10b981;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);
-}
-
-.sales-total-badge small {
-    display: block;
-    font-size: 10px;
-    text-transform: uppercase;
-    opacity: 0.9;
-}
-
-.sales-total-badge span {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-/* Түүхийн жагсаалт */
-.history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 5px;
-    border-bottom: 1px solid var(--border);
-}
-
-.history-date {
-    font-size: 11px;
-    color: #888;
-}
-
-.history-price {
-    color: #10b981;
-    font-weight: bold;
-}
-
-input,
-textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--card);
-    color: var(--text);
-    box-sizing: border-box;
-}
-
-/* Print Styles */
+/* PDF хэвлэх үеийн тусгай тохиргоо */
 @media print {
-    .no-print {
+    /* Товчлуур, хайлтын хэсэг, sidebar-г нуух */
+    .no-print, .header-controls, .sidebar, .sidebar-overlay, .admin-controls, .sell-btn, .btn-secondary, hr {
         display: none !important;
     }
 
     body {
-        background: white;
-        color: black;
+        background: white !important;
+        padding: 0;
     }
 
     .grid {
-        display: block;
+        display: block !important; /* PDF дээр нэг мөрөнд биш, жагсаалт болгож харуулбал илүү тохиромжтой */
+        padding: 0;
     }
 
     .card {
-        border: 1px solid #ccc;
-        margin-bottom: 15px;
-        break-inside: avoid;
-        page-break-inside: avoid;
+        break-inside: avoid; /* Карт дундуураа тасрахаас сэргийлнэ */
+        border: 1px solid #eee;
+        margin-bottom: 20px;
+        box-shadow: none !important;
+        transform: none !important;
     }
 
-    .sidebar,
-    .sidebar-overlay,
-    .fab-theme {
-        display: none !important;
+    .total-badge {
+        color: black !important;
+        border: 1px solid #000;
+        background: none !important;
     }
 }

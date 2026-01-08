@@ -3,86 +3,85 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>InvCloud - 库存管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvCloud - Inventory System</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
 </head>
 
 <body>
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <aside class="sidebar no-print" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">📦 InvCloud</div>
-            <button class="close-btn" onclick="toggleSidebar()">✕</button>
-        </div>
-        <div class="sidebar-content">
-            <div id="loginSection">
-                <h4>管理员登录</h4>
-                <input type="email" id="loginEmail" placeholder="电子邮件">
-                <input type="password" id="loginPass" placeholder="密码">
-                <button onclick="login()" class="btn-primary">登录</button>
-            </div>
-
-            <div id="addSection" style="display:none;">
-                <h4>添加 / 编辑商品</h4>
-                <input type="text" id="itemName" placeholder="商品名称">
-                <input type="number" id="itemPrice" placeholder="单价 (¥)">
-
-                <div id="variantInputs">
-                </div>
-                <button class="btn-add-variant" onclick="addVariantInput()">➕ 添加更多颜色</button>
-
-                <div class="file-drop" onclick="document.getElementById('itemImage').click()">
-                    <span id="fileText">📸 选择图片</span>
-                    <input type="file" id="itemImage" accept="image/*" style="display:none">
-                </div>
-                <div id="preview"></div>
-
-                <button id="addBtn" class="btn-primary">💾 保存商品</button>
-
-                <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
-
-                <button onclick="window.print()" class="btn-print">📄 生成 PDF 报告</button>
-                <button onclick="showHistory()" class="btn-secondary" style="margin-top:10px; width:100%;">📜
-                    查看销售历史</button>
-                <button onclick="logout()" class="btn-danger" style="margin-top:20px; width:100%;">🚪 退出登录</button>
-            </div>
-        </div>
-    </aside>
-
-    <div id="historyModal" class="modal no-print">
-    <div class="modal-content">
-        <div id="historyList"></div> 
-        <button onclick="closeHistory()" class="btn-primary" style="margin-top:20px;">关闭 (Хаах)</button>
-    </div>
-</div>
-
-    <main class="main">
-        <header class="header-controls no-print">
-            <div class="top-row">
+    <header class="header-controls no-print">
+        <div class="header-content">
+            <div class="header-left">
                 <button class="menu-btn" onclick="toggleSidebar()">☰ 菜单</button>
+            </div>
+
+            <div class="header-center">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="搜索商品..." oninput="searchItems()">
+                </div>
+            </div>
+
+            <div class="header-right">
                 <div class="total-badge">
                     <small>总资产</small>
                     <span id="total">¥0</span>
                 </div>
+                <button class="theme-toggle" onclick="toggleDarkMode()" id="modeIcon">🌙</button>
             </div>
-            <div class="search-row">
-                <input type="text" id="searchInput" placeholder="🔍 搜索商品..." oninput="searchItems()">
-            </div>
-        </header>
+        </div>
+    </header>
 
-        <div id="inventoryGrid" class="grid"></div>
+    <aside class="sidebar">
+        <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
+        <div class="sidebar-inner">
+            <div id="loginSection" style="display: none;">
+                <div class="auth-box">
+                    <h2>🔐 管理员登录</h2>
+                    <input type="email" id="loginEmail" placeholder="电子邮件">
+                    <input type="password" id="loginPass" placeholder="密码">
+                    <button class="btn-primary" onclick="login()">登录</button>
+                </div>
+            </div>
+
+            <div id="adminSection" style="display: none;">
+                <h2>📦 添加 / 编辑商品</h2>
+                <div class="form-group">
+                    <input type="text" id="itemName" placeholder="商品名称">
+                    <input type="number" id="itemPrice" placeholder="单价 (¥)">
+
+                    <div id="variantInputs"></div>
+                    <button class="btn-secondary" onclick="addVariantInput()">➕ 添加更多颜色</button>
+
+                    <div class="image-upload-area">
+                        <label for="itemImage" class="upload-label">
+                            <span id="fileText">📸 选择图片</span>
+                            <input type="file" id="itemImage" accept="image/*" hidden>
+                        </label>
+                        <div id="preview"></div>
+                    </div>
+
+                    <button class="btn-primary" id="saveBtn" onclick="saveItem()">💾 保存商品</button>
+                </div>
+                <hr>
+                <div class="sidebar-footer">
+                    <button onclick="window.print()" class="btn-outline success">🖨️ 导出 PDF / 打印</button>
+                    <button onclick="showHistory()" class="btn-outline">📜 销售历史</button>
+                    <button onclick="logout()" class="btn-outline danger">🚪 退出登录</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="grid" id="inventoryGrid">
     </main>
 
-    <button id="darkModeToggle" class="fab-theme no-print" onclick="toggleDarkMode()">
-        <span id="modeIcon">🌙</span>
-    </button>
-
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <script src="script.js"></script>
 </body>
 
