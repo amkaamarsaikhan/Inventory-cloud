@@ -282,6 +282,15 @@ body.sidebar-open .sidebar {
     font-weight: bold;
     cursor: pointer;
 }
+.add-qty-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
 .price-tag {
     display: block;

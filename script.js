@@ -39,6 +39,13 @@ auth.onAuthStateChanged(user => {
     }
 });
 
+// ADD QTY Function
+async function addItemQty(itemId, variantIndex) {
+    const item = inventory.find(i => i.id === itemId);
+    const qty = parseInt(item.variants[variantIndex].qty) || 0;
+    await db.ref(`items/${itemId}/variants/${variantIndex}`).update({ qty: qty + 1 });
+}
+
 // Sell Function
 async function sellItem(itemId, variantIndex) {
     const item = inventory.find(i => i.id === itemId);
@@ -86,7 +93,6 @@ function showHistory() {
                 .total { background: #2563eb; color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
                 table { width: 100%; border-collapse: collapse; }
                 th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-                /* Хэвлэх үед товчлуурыг нуух */
                 @media print { .no-print { display: none !important; } }
             </style></head><body>
             <div class="header"><h2>📜 销售历史</h2><div class="total">总计: ¥${totalSales.toLocaleString()}</div></div>
@@ -132,7 +138,10 @@ function render(data = inventory) {
                 ${variants.map((v, idx) => `
                     <div class="variant-row">
                         <span>${v.color}: <b>${v.qty}</b></span>
-                        <button class="sell-btn" onclick="sellItem('${item.id}', ${idx})">💸 出售</button>
+                        <div class="action-btns">
+                            <button class="add-qty-btn" onclick="addItemQty('${item.id}', ${idx})">+</button>
+                            <button class="sell-btn" onclick="sellItem('${item.id}', ${idx})">💸 出售</button>
+                        </div>
                     </div>
                 `).join('')}
                 <span class="price-tag">¥${(itemQty * item.price).toLocaleString()}</span>
@@ -147,7 +156,6 @@ function render(data = inventory) {
     document.getElementById('total').innerText = "¥" + totalAssets.toLocaleString();
 }
 
-// CRUD & UI Helpers
 function toggleSidebar() { document.body.classList.toggle('sidebar-open'); }
 function toggleDarkMode() {
     const isDark = document.body.classList.toggle('dark-mode');
@@ -225,11 +233,6 @@ function deleteItem(id) { if (confirm("确定删除吗？")) db.ref(`items/${id}
 function login() { auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPass').value).catch(e => alert(e.message)); }
 function logout() { auth.signOut().then(() => window.location.reload()); }
 
+function printInventory() { window.print(); }
+
 addVariantInput();
-
-
-// script.js доторх хуучин printInventory функцийг үүгээр соль
-function printInventory() {
-    // Ямар нэгэн setTimeout эсвэл нэмэлт кодгүйгээр шууд дуудах
-    window.print();
-}
