@@ -43,7 +43,7 @@ auth.onAuthStateChanged(user => {
 async function sellItem(itemId, variantIndex) {
     const item = inventory.find(i => i.id === itemId);
     const qty = parseInt(item.variants[variantIndex].qty);
-    
+
     if (qty > 0) {
         const newQty = qty - 1;
         await db.ref(`items/${itemId}/variants/${variantIndex}`).update({ qty: newQty });
@@ -72,16 +72,13 @@ function showHistory() {
             return `<tr><td>${h.time}</td><td>${h.itemName || '未知'} (${h.color || '-'})</td><td align="right">¥${price.toLocaleString()}</td></tr>`;
         }).join("");
 
-        // 1. Цонх нээх оролдлого
         const win = window.open("", "HistoryWindow", "width=800,height=800");
 
-        // 2. Цонх нээгдсэн эсэхийг шалгах (АЛДААНААС СЭРГИЙЛЭХ ХЭСЭГ)
-        if (!win || win.closed || typeof win.document === 'undefined') {
-            alert("⚠️ 弹出窗口被拦截！请允许此页面的弹出窗口以查看历史记录。\n\n(Таны хөтөч цонх нээхийг хаасан байна. Хаягны мөрний баруун талд байгаа 'Popup blocked' хэсэг дээр дарж зөвшөөрнө үү.)");
+        if (!win) {
+            alert("⚠️ 弹出窗口被拦截！请允许弹出窗口。");
             return;
         }
 
-        // 3. Зөвхөн цонх нээгдсэн тохиолдолд өгөгдлийг бичих
         win.document.write(`
             <html><head><title>销售历史</title><style>
                 body { font-family: sans-serif; padding: 20px; line-height: 1.5; }
@@ -89,11 +86,16 @@ function showHistory() {
                 .total { background: #2563eb; color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
                 table { width: 100%; border-collapse: collapse; }
                 th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-                tr:hover { background: #f8fafc; }
+                /* Хэвлэх үед товчлуурыг нуух */
+                @media print { .no-print { display: none !important; } }
             </style></head><body>
             <div class="header"><h2>📜 销售历史</h2><div class="total">总计: ¥${totalSales.toLocaleString()}</div></div>
             <table><tr><th>时间</th><th>商品</th><th align="right">金额</th></tr>${rows}</table>
-            <button onclick="setTimeout(() => { window.print(); }, 500)">打印 / PDF</button>
+            <br>
+            <button class="no-print" onclick="setTimeout(() => { window.print(); }, 500)" 
+                style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                🖨️ 打印 / 导出 PDF
+            </button>
             </body></html>
         `);
         win.document.close();
@@ -103,8 +105,8 @@ function showHistory() {
 // Search
 function searchItems() {
     const query = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = inventory.filter(item => 
-        item.name.toLowerCase().includes(query) || 
+    const filtered = inventory.filter(item =>
+        item.name.toLowerCase().includes(query) ||
         (item.variants && item.variants.some(v => v.color.toLowerCase().includes(query)))
     );
     render(filtered);
@@ -147,8 +149,8 @@ function render(data = inventory) {
 
 // CRUD & UI Helpers
 function toggleSidebar() { document.body.classList.toggle('sidebar-open'); }
-function toggleDarkMode() { 
-    const isDark = document.body.classList.toggle('dark-mode'); 
+function toggleDarkMode() {
+    const isDark = document.body.classList.toggle('dark-mode');
     document.getElementById('modeIcon').innerText = isDark ? '☀️' : '🌙';
 }
 
@@ -191,7 +193,7 @@ async function saveItem() {
         qty: parseInt(div.querySelector('.v-qty').value) || 0
     })).filter(v => v.color);
 
-    if(!name || isNaN(price)) return alert("请填写完整信息");
+    if (!name || isNaN(price)) return alert("请填写完整信息");
 
     const data = { name, price, variants, image: currentImageData };
     editId ? await db.ref(`items/${editId}`).update(data) : await db.ref("items").push(data);
@@ -219,7 +221,7 @@ function prepareEdit(id) {
     toggleSidebar();
 }
 
-function deleteItem(id) { if(confirm("确定删除吗？")) db.ref(`items/${id}`).remove(); }
+function deleteItem(id) { if (confirm("确定删除吗？")) db.ref(`items/${id}`).remove(); }
 function login() { auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPass').value).catch(e => alert(e.message)); }
 function logout() { auth.signOut().then(() => window.location.reload()); }
 
