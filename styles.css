@@ -53,49 +53,7 @@ body.sidebar-open .sidebar-overlay {
     display: block;
 }
 
-/* Header & Inputs */
-.header-controls {
-    padding: 15px;
-    background: var(--bg);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.total-badge {
-    text-align: right;
-    background: var(--card);
-    padding: 5px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-}
-
-.total-badge span {
-    display: block;
-    font-weight: bold;
-    color: var(--primary);
-    font-size: 16px;
-}
-
-input,
-textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--card);
-    color: var(--text);
-    box-sizing: border-box;
-}
-
+/* Buttons */
 .btn-primary {
     width: 100%;
     background: var(--primary);
@@ -107,7 +65,48 @@ textarea {
     cursor: pointer;
 }
 
-/* Inventory Grid & Cards */
+.btn-secondary {
+    background: #64748b;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-print {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    width: 100%;
+    cursor: pointer;
+}
+
+.btn-add-variant {
+    background: none;
+    border: 1px dashed var(--primary);
+    color: var(--primary);
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+/* Grid & Cards */
 .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -138,7 +137,6 @@ textarea {
 
 .card-body {
     padding: 10px;
-    flex: 1;
 }
 
 .card-body h4 {
@@ -146,13 +144,13 @@ textarea {
     font-size: 14px;
 }
 
-/* Variant & Sell Button */
+/* Variant Row & Sell Button */
 .variant-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: rgba(0, 0, 0, 0.03);
-    padding: 4px 6px;
+    padding: 5px 8px;
     border-radius: 6px;
     margin-bottom: 4px;
 }
@@ -165,26 +163,70 @@ body.dark-mode .variant-row {
     background: #10b981;
     color: white;
     border: none;
-    padding: 3px 8px;
+    padding: 4px 10px;
     border-radius: 4px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: bold;
     cursor: pointer;
 }
 
-.sell-btn:active {
-    transform: scale(0.9);
+/* Compact Counter (Нэг мөрөнд) */
+.counter {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    height: 36px;
 }
 
-.price {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    color: var(--primary);
-    font-size: 14px;
+.counter button {
+    width: 30px;
+    height: 100%;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 18px;
 }
 
-/* Floating Button */
+.counter input {
+    width: 40px;
+    border: none !important;
+    text-align: center;
+    margin-bottom: 0 !important;
+    background: transparent;
+    color: var(--text);
+    -moz-appearance: textfield;
+}
+
+.counter input::-webkit-outer-spin-button,
+.counter input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 3000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+    max-width: 500px;
+    margin: auto;
+}
+
+/* FAB & Others */
 .fab-theme {
     position: fixed;
     bottom: 20px;
@@ -195,13 +237,115 @@ body.dark-mode .variant-row {
     background: var(--primary);
     color: white;
     border: none;
-    z-index: 3000;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.price {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: var(--primary);
+    font-size: 15px;
+}
+/* History Modal доторх толгой хэсэг */
+.history-header-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    position: sticky;
+    top: 0;
+    background: var(--card);
+    z-index: 10;
+}
+
+.history-header-summary h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+/* Нийт борлуулалтын тэмдэг */
+.sales-total-badge {
+    text-align: right;
+    background: #10b981;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);
+}
+
+.sales-total-badge small {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.sales-total-badge span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Түүхийн жагсаалт */
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 5px;
+    border-bottom: 1px solid var(--border);
+}
+
+.history-date {
+    font-size: 11px;
+    color: #888;
+}
+
+.history-price {
+    color: #10b981;
+    font-weight: bold;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--text);
+    box-sizing: border-box;
+}
+
+/* Print Styles */
 @media print {
     .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .grid {
+        display: block;
+    }
+
+    .card {
+        border: 1px solid #ccc;
+        margin-bottom: 15px;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .sidebar,
+    .sidebar-overlay,
+    .fab-theme {
         display: none !important;
     }
 }

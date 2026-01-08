@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VDD-库存管理系统</title>
+    <title>InvCloud - 库存管理系统</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-    
+
     <aside class="sidebar no-print" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">📦 InvCloud</div>
@@ -22,22 +24,40 @@
                 <input type="password" id="loginPass" placeholder="密码">
                 <button onclick="login()" class="btn-primary">登录</button>
             </div>
+
             <div id="addSection" style="display:none;">
                 <h4>添加 / 编辑商品</h4>
                 <input type="text" id="itemName" placeholder="商品名称">
-                <input type="number" id="itemPrice" placeholder="单价 ($)">
-                <textarea id="itemColorName" placeholder="颜色:数量 (例如: 红色:10, 黑色:5)"></textarea>
+                <input type="number" id="itemPrice" placeholder="单价 (¥)">
+
+                <div id="variantInputs">
+                </div>
+                <button class="btn-add-variant" onclick="addVariantInput()">➕ 添加更多颜色</button>
+
                 <div class="file-drop" onclick="document.getElementById('itemImage').click()">
                     <span id="fileText">📸 选择图片</span>
                     <input type="file" id="itemImage" accept="image/*" style="display:none">
                 </div>
                 <div id="preview"></div>
+
                 <button id="addBtn" class="btn-primary">💾 保存商品</button>
-                <button onclick="logout()" class="btn-secondary" style="margin-top:20px; width:100%;">🚪 退出登录</button>
+
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
+
+                <button onclick="window.print()" class="btn-print">📄 生成 PDF 报告</button>
+                <button onclick="showHistory()" class="btn-secondary" style="margin-top:10px; width:100%;">📜
+                    查看销售历史</button>
+                <button onclick="logout()" class="btn-danger" style="margin-top:20px; width:100%;">🚪 退出登录</button>
             </div>
-            <button onclick="window.print()" class="btn-print" style="margin-top:20px; width:100%;">📄 生成 PDF 报告</button>
         </div>
     </aside>
+
+    <div id="historyModal" class="modal no-print">
+    <div class="modal-content">
+        <div id="historyList"></div> 
+        <button onclick="closeHistory()" class="btn-primary" style="margin-top:20px;">关闭 (Хаах)</button>
+    </div>
+</div>
 
     <main class="main">
         <header class="header-controls no-print">
@@ -45,7 +65,7 @@
                 <button class="menu-btn" onclick="toggleSidebar()">☰ 菜单</button>
                 <div class="total-badge">
                     <small>总资产</small>
-                    <span id="total">$0</span>
+                    <span id="total">¥0</span>
                 </div>
             </div>
             <div class="search-row">
@@ -65,4 +85,5 @@
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
